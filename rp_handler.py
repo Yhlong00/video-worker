@@ -2,7 +2,7 @@ import runpod
 import subprocess
 
 def handler(event):
-    print(f"Worker Start")
+    print("Worker Start")
     input_data = event['input']
 
     prompt = input_data.get('prompt')
@@ -10,7 +10,6 @@ def handler(event):
 
     print(f"Received prompt: {prompt}")
 
-    # Define command
     command = [
         "python", "generate.py",
         "--task", "i2v-14B",
@@ -21,24 +20,37 @@ def handler(event):
     ]
 
     try:
-        # Run the command in /runpod-volume/folder/
-        result = subprocess.run(
+        process = subprocess.Popen(
             command,
             cwd="/runpod-volume/Wan2.1/",
-            capture_output=True,
-            text=True,
-            check=True
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True
         )
-        print("Command output:", result.stdout)
+
+        full_output = []
+        for line in process.stdout:
+            print(line.strip())  # Print each line as it comes
+            full_output.append(line.strip())
+
+        process.wait()
+        if process.returncode != 0:
+            return {
+                "status": "error",
+                "error": "Process exited with error",
+                "output": "\n".join(full_output)
+            }
+
         return {
             "status": "success",
-            "output": result.stdout.strip()
+            "output": "\n".join(full_output)
         }
-    except subprocess.CalledProcessError as e:
-        print("Command failed:", e.stderr)
+
+    except Exception as e:
+        print("Subprocess exception:", str(e))
         return {
             "status": "error",
-            "error": e.stderr.strip()
+            "error": str(e)
         }
 
 if __name__ == '__main__':
