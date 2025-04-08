@@ -53,7 +53,7 @@ def generate_video(prompt):
         offload_model=True
     )
 
-    save_path = f"generated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+    save_path = f"/runpod-volume/output/generated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
     logging.info(f"Saving video to {save_path}")
     cache_video(
         tensor=video[None],
