@@ -1,6 +1,6 @@
-# Worker Basic
+# Video Worker
 
-This is a minimal serverless worker example. You can use the provided code to build a Docker image and deploy it as a serverless endpoint. When a request is sent to the endpoint, a worker spins up and executes the rp_handler.py script. You can replace the sleep function with any machine learning task, such as image generation, text generation, or speech-to-text conversion.
+This is a minimal serverless worker example. You can use the provided code to build a Docker image and deploy it as a serverless endpoint. When a request is sent to the endpoint, a worker spins up and executes the rp_handler.py script.
 
 ## To test this code locally:
 
@@ -17,7 +17,7 @@ source venv/bin/activate
 venv\Scripts\activate
 
 # 3. Install the RunPod SDK
-pip install runpod
+pip install -r requirements.txt
 
 # 4. Run your script locally, the script will automatically read test_input.json as input, passing it to the handler function as an event
 python3 rp_handler.py
