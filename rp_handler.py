@@ -9,7 +9,7 @@ from wan.configs import WAN_CONFIGS, SIZE_CONFIGS, MAX_AREA_CONFIGS
 from wan.utils.utils import cache_video
 
 
-def generate_video(prompt):
+def generate_video(prompt, image_path=None):
     logging.basicConfig(
         level=logging.INFO,
         format="[%(asctime)s] %(levelname)s: %(message)s",
@@ -19,7 +19,10 @@ def generate_video(prompt):
     task = "i2v-14B"
     size = "832*480"
     ckpt_dir = "/runpod-volume/Wan2.1-I2V-14B-480P"
-    image_path = "examples/i2v_input.JPG"
+    default_image_path = "examples/i2v_input.JPG"
+    
+    # Use provided image_path if available, otherwise use default
+    image_path = image_path if image_path else default_image_path
 
     cfg = WAN_CONFIGS[task]
     logging.info(f"Prompt: {prompt}")
@@ -65,17 +68,19 @@ def generate_video(prompt):
     )
     logging.info("Finished.")
     return save_path
- # assuming you saved it as a separate module
+
 
 def handler(event):
     print("Worker Start")
     input_data = event['input']
 
     prompt = input_data.get('prompt')
+    image_path = input_data.get('image_path')  # Get optional image_path from input
     print(f"Received prompt: {prompt}")
+    print(f"Received image_path: {image_path}")
 
     try:
-        output_path = generate_video(prompt)
+        output_path = generate_video(prompt, image_path)
         return {
             "status": "success",
             "output_path": output_path
